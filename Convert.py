@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ET
 import os
 import argparse
-import re
+
 
 def parse_uvprojx(uvprojx_path):
     """解析uvprojx文件，提取项目配置"""
@@ -62,18 +62,18 @@ def parse_uvprojx(uvprojx_path):
     c_flags = root.find('.//TargetOption/TargetArmAds/Cads/VariousControls/MiscControls') 
     asm_flags = root.find('.//TargetOption/TargetArmAds/Aads/VariousControls/MiscControls') 
     ld_flags = root.find('.//TargetOption/TargetArmAds/LDads/VariousControls/MiscControls') 
-    if c_flags != None and c_flags.text!=None:
-        c_flags=c_flags.text
+    if c_flags is not None and c_flags.text is not None:
+        c_flags = c_flags.text
     else:
-        c_flags=''
-    if asm_flags != None and asm_flags.text!=None:
-        asm_flags=asm_flags.text
+        c_flags = ''
+    if asm_flags is not None and asm_flags.text is not None:
+        asm_flags = asm_flags.text
     else:
-        asm_flags=''
-    if ld_flags != None:
-        ld_flags=ld_flags.text
+        asm_flags = ''
+    if ld_flags is not None:
+        ld_flags = ld_flags.text
     else:
-        ld_flags=''
+        ld_flags = ''
     
     # 优化级别
     print("Defining optimize level...")
@@ -99,6 +99,7 @@ def parse_uvprojx(uvprojx_path):
         'opt_level': opt_level
     }
 
+
 def detect_cpu_architecture(device_name):
     """根据设备名称推断CPU架构"""
     device_lower = device_name.lower()
@@ -120,6 +121,7 @@ def detect_cpu_architecture(device_name):
     # 默认值
     return "Cortex-M4"
 
+
 def generate_cmakelists(project_data, output_dir):
     """生成CMakeLists.txt文件"""
     # 处理包含路径中的空格问题
@@ -129,7 +131,7 @@ def generate_cmakelists(project_data, output_dir):
             include_paths_formatted.append(f'"{path}"')
         else:
             include_paths_formatted.append(path)
-    
+
     # 处理源文件路径中的空格问题
     source_files_formatted = []
     for file in project_data['source_files']:
@@ -137,54 +139,56 @@ def generate_cmakelists(project_data, output_dir):
             source_files_formatted.append(f'"{file}"')
         else:
             source_files_formatted.append(file)
-    
-    content = f"""cmake_minimum_required(VERSION 4.0)
 
-# 包含工具链配置
-set(CMAKE_TOOLCHAIN_FILE ${{CMAKE_CURRENT_SOURCE_DIR}}/toolchain.cmake)
+    # 解决 f-string 表达式不允许出现反斜杠的问题
+    src_files = "\n    ".join(source_files_formatted)
+    src_files = src_files.replace('\\', '/')
+    inc_paths = "\n    ".join(include_paths_formatted)
+    inc_paths = inc_paths.replace('\\', '/')
+    defines = "\n    ".join(project_data['defines'])
+    # 单独处理 linker_script，防止 f-string 内部出现反斜杠
+    linker_script_path = project_data['linker_script'].replace('\\', '/') if project_data['linker_script'] else ''
+    ld_flags = project_data['ld_flags']
 
-project({project_data['project_name']} LANGUAGES C ASM)
-
-# 添加可执行文件
-add_executable(${{PROJECT_NAME}}
-    {"\n    ".join(source_files_formatted).replace('\\','/')}
-)
-
-# 添加自定义目标用于生成二进制文件 (使用 POST_BUILD)
-add_custom_command(TARGET ${{PROJECT_NAME}} POST_BUILD
-    COMMAND ${{CMAKE_FROMELF}} --i32combined --output="${{CMAKE_RUNTIME_OUTPUT_DIRECTORY}}${{PROJECT_NAME}}.hex" "$<TARGET_FILE:${{PROJECT_NAME}}>"
-    COMMENT "Generating HEX file"
-)
-
-add_custom_command(TARGET ${{PROJECT_NAME}} POST_BUILD
-    COMMAND ${{CMAKE_FROMELF}} --bin --output="${{CMAKE_RUNTIME_OUTPUT_DIRECTORY}}${{PROJECT_NAME}}.bin" "$<TARGET_FILE:${{PROJECT_NAME}}>"
-    COMMENT "Generating BIN file"
-)
-
-# 包含目录
-target_include_directories(${{PROJECT_NAME}} PRIVATE
-    {"\n    ".join(include_paths_formatted).replace('\\','/')}
-)
-
-# 预处理器定义
-target_compile_definitions(${{PROJECT_NAME}} PRIVATE
-    {"\n    ".join(project_data['defines'])}
-)
-
-# 链接器脚本设置
-set(LINKER_SCRIPT "${{CMAKE_SOURCE_DIR}}/{project_data['linker_script'].replace('\\','/')}")
-
-
-# 链接选项
-target_link_options(${{PROJECT_NAME}} PRIVATE
-    ${{LINKER_FLAGS}}
-    "--scatter=${{LINKER_SCRIPT}}"
-    {project_data['ld_flags']}
-)
-"""
+    content = (
+        'cmake_minimum_required(VERSION 4.0)\n\n'
+        '# 包含工具链配置\n'
+        'set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/toolchain.cmake)\n\n'
+        f'project({project_data["project_name"]} LANGUAGES C ASM)\n\n'
+        '# 添加可执行文件\n'
+        'add_executable(${PROJECT_NAME}\n'
+        f'    {src_files}\n'  # 源文件
+        ')\n\n'
+        '# 添加自定义目标用于生成二进制文件 (使用 POST_BUILD)\n'
+        'add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD\n'
+        '    COMMAND ${CMAKE_FROMELF} --i32combined --output="${CMAKE_RUNTIME_OUTPUT_DIRECTORY}${PROJECT_NAME}.hex" "$<TARGET_FILE:${PROJECT_NAME}>"\n'
+        '    COMMENT "Generating HEX file"\n'
+        ')\n\n'
+        'add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD\n'
+        '    COMMAND ${CMAKE_FROMELF} --bin --output="${CMAKE_RUNTIME_OUTPUT_DIRECTORY}${PROJECT_NAME}.bin" "$<TARGET_FILE:${PROJECT_NAME}>"\n'
+        '    COMMENT "Generating BIN file"\n'
+        ')\n\n'
+        '# 包含目录\n'
+        'target_include_directories(${PROJECT_NAME} PRIVATE\n'
+        f'    {inc_paths}\n'
+        ')\n\n'
+        '# 预处理器定义\n'
+        'target_compile_definitions(${PROJECT_NAME} PRIVATE\n'
+        f'    {defines}\n'
+        ')\n\n'
+        '# 链接器脚本设置\n'
+        f'set(LINKER_SCRIPT "${{CMAKE_SOURCE_DIR}}/{linker_script_path}")\n\n'
+        '# 链接选项\n'
+        'target_link_options(${PROJECT_NAME} PRIVATE\n'
+        '    ${LINKER_FLAGS}\n'
+        '    "--scatter=${LINKER_SCRIPT}"\n'
+        f'    {ld_flags}\n'
+        ')\n'
+    )
 
     with open(os.path.join(output_dir, 'CMakeLists.txt'), 'w', encoding="UTF-8") as f:
         f.write(content)
+
 
 def generate_toolchain(project_data, output_dir):
     """生成ARMCC工具链配置文件"""
@@ -283,6 +287,7 @@ message(STATUS "构建类型: ${{CMAKE_BUILD_TYPE}}")
     with open(os.path.join(output_dir, 'toolchain.cmake'), 'w', encoding="UTF-8") as f:
         f.write(content)
 
+
 def main():
     parser = argparse.ArgumentParser(description='Convert Keil uVision project to CMake for ARM Compiler')
     parser.add_argument('uvprojx', help='Path to .uvprojx file')
@@ -308,6 +313,7 @@ def main():
     print(f"Build commands:")
     print(f"  cmake -G Ninja -B build .")
     print(f"  cmake --build build")
+
 
 if __name__ == '__main__':
     main()
