@@ -14,18 +14,18 @@ In case that you do not know how to find it, open keil and open Windows task man
 ## usage
 ### 1.generate CMakeLists.txt and toolchain.cmake according to uvprojx file
 In any command line, do
-```pwsh
-Python <path/to/Convert.py> <path/to/uvision/file.uvprojx> -o <path/to/output/dir>
+```powershell
+Python <path/to/Convert.py> <path/to/uvision/file.uvprojx> -o <path/to/output/directory>
 ```
 For example, I would copy Convert.py into the root dir of one project, open pwsh in that dir, and do
-```pwsh
+```powershell
 Python ./Convert.py ./USER/example.uvprojx -o .
 ```
 and then the CMakeLists.txt and toolchain.cmake will be generated at ./
 
 ### 2.generate build chain and build it
 In the dir mentioned above, do in command line
-```pwsh
+```powershell
 CMake -G Ninja -B build .
 CMake --build build
 ```
