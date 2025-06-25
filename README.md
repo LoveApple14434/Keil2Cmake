@@ -1,10 +1,10 @@
 # Keil2Cmake Converter
 
 ## env requirement
--Python3
--Cmake
--Ninja
--Keil compilor
+- Python3
+- Cmake
+- Ninja
+- Keil compilor
 
 ## before use
 Before your first use, turn to line 202 and fill in your own keil path installed on your PC.
