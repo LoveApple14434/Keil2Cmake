@@ -7,11 +7,17 @@
 - Keil compilor
 
 ## before use
-Before your first use, turn to line 202 and fill in your own keil path installed on your PC.
+Before your first use, turn to **line 202** and fill in **your own keil path** installed on your PC.
 
 In case that you do not know how to find it, open keil and open Windows task manager, in which right click the Keil task, open the path and just copy it into Convert.py line 202.
 
 ## usage
+### 0.generate scatter file through keil
+Open the keil project you want to convert. Assure it **has been built** once at least.
+
+Open **'Options for Target'**, turn to **'Linker'** page, unselect the **'Use Memory Layout for Target Dialog'**, then press **'Edit'** button below, and keil will automatically generate a Template.sct for you. 
+
+Close Keil and head onto the next step.
 ### 1.generate CMakeLists.txt and toolchain.cmake according to uvprojx file
 In any command line, do
 ```bash
