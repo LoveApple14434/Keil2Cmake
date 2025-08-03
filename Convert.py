@@ -148,6 +148,8 @@ def generate_cmakelists(project_data, output_dir):
     defines = "\n    ".join(project_data['defines'])
     # 单独处理 linker_script，防止 f-string 内部出现反斜杠
     linker_script_path = project_data['linker_script'].replace('\\', '/') if project_data['linker_script'] else ''
+    if linker_script_path.strip()=='' or linker_script_path=='/':
+        linker_script_path='Template.sct'
     ld_flags = project_data['ld_flags']
 
     content = (
@@ -177,7 +179,7 @@ def generate_cmakelists(project_data, output_dir):
         f'    {defines}\n'
         ')\n\n'
         '# 链接器脚本设置\n'
-        f'set(LINKER_SCRIPT "${{CMAKE_SOURCE_DIR}}/Template.sct")\n\n'
+        f'set(LINKER_SCRIPT "${{CMAKE_SOURCE_DIR}}/{linker_script_path}")\n\n'
         '# 链接选项\n'
         'target_link_options(${PROJECT_NAME} PRIVATE\n'
         '    ${LINKER_FLAGS}\n'
