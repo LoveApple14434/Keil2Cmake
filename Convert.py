@@ -147,9 +147,10 @@ def generate_cmakelists(project_data, output_dir):
     inc_paths = inc_paths.replace('\\', '/')
     defines = "\n    ".join(project_data['defines'])
     # 单独处理 linker_script，防止 f-string 内部出现反斜杠
-    linker_script_path = project_data['linker_script'].replace('\\', '/') if project_data['linker_script'] else ''
-    if linker_script_path.strip()=='' or linker_script_path=='/':
-        linker_script_path='Template.sct'
+    # linker_script_path = project_data['linker_script'].replace('\\', '/') if project_data['linker_script'] else ''
+    # if linker_script_path.strip()=='' or linker_script_path=='/':
+        # linker_script_path='Template.sct'
+    linker_script_path='Template.sct'
     ld_flags = project_data['ld_flags']
 
     content = (
