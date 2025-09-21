@@ -41,3 +41,17 @@ CMake -G Ninja -B build .
 CMake --build build
 ```
 Then your build target(.hex and .bin) will be generated in ./build/. Then use FLYMCU or ST-Link Utility or anything you like to burn it into your MCU.
+
+## Configure Toolchain Path
+
+Toolchain path should be stored in `~/.keil2cmake/path.cfg` . Use commands as follow to view or edit the paths:
+
+```bash
+keil2cmake --show-config
+keil2cmake -sc
+
+keil2cmake --edit ARMCC_PATH=D:/Program/Keil_v5/ARM/ARM_Compiler_5.06u7/bin/
+keil2cmake -e ARMCC_PATH=D:/Program/Keil_v5/ARM/ARM_Compiler_5.06u7/bin/
+keil2cmake --edit ARMCLANG_PATH=D:/Program/Keil_v5/ARM/ARMCLANG/bin/
+keil2cmake -e ARMCLANG_PATH=D:/Program/Keil_v5/ARM/ARMCLANG/bin/
+```
