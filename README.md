@@ -1,10 +1,6 @@
-好的，这是根据您修改后的文件重新翻译的版本。
+# Keil2Cmake Converter
 
------
-
-# Keil2Cmake 转换器
-
-2025 年 9 月 21 日：我已使用 Pyinstaller 生成了适用于 Windows 和 Linux 的可执行文件。请通过 [GitHub release](https://github.com/LoveApple14434/Keil2Cmake/releases/tag/v1) 下载使用。现在你的电脑上不再需要安装 Python 环境了。
+2025 年 9 月 21 日：已使用 Pyinstaller 生成了适用于 Windows 和 Linux 的可执行文件。请通过 [GitHub release](https://github.com/LoveApple14434/Keil2Cmake/releases/tag/v1) 下载使用。现在你的电脑上不再需要安装 Python 环境了。
 
 ## 环境要求
 
