@@ -1,3 +1,7 @@
+好的，这是根据您修改后的文件重新翻译的版本。
+
+-----
+
 # Keil2Cmake 转换器
 
 2025 年 9 月 21 日：我已使用 Pyinstaller 生成了适用于 Windows 和 Linux 的可执行文件。请通过 [GitHub release](https://github.com/LoveApple14434/Keil2Cmake/releases/tag/v1) 下载使用。现在你的电脑上不再需要安装 Python 环境了。
@@ -22,19 +26,12 @@
 工具链路径应存储在 `~/.keil2cmake/path.cfg` 文件中。使用以下命令来查看或编辑路径：
 
 ```bash
-# 显示当前配置
 keil2cmake --show-config
-# 或者
 keil2cmake -sc
 
-# 编辑 ARMCC (Keil C51 编译器) 路径
 keil2cmake --edit ARMCC_PATH=D:/Program/Keil_v5/ARM/ARM_Compiler_5.06u7/bin/
-# 或者
 keil2cmake -e ARMCC_PATH=D:/Program/Keil_v5/ARM/ARM_Compiler_5.06u7/bin/
-
-# 编辑 ARMCLANG (Keil MDK-ARM 编译器) 路径
 keil2cmake --edit ARMCLANG_PATH=D:/Program/Keil_v5/ARM/ARMCLANG/bin/
-# 或者
 keil2cmake -e ARMCLANG_PATH=D:/Program/Keil_v5/ARM/ARMCLANG/bin/
 ```
 
@@ -49,6 +46,12 @@ keil2cmake -e ARMCLANG_PATH=D:/Program/Keil_v5/ARM/ARMCLANG/bin/
 > 打开 **'Options for Target' (目标选项)**，切换到 **'Linker' (链接器)** 标签页，**取消勾选 'Use Memory Layout from Target Dialog' (使用目标对话框中的内存布局)**，然后点击下方的 **'Edit' (编辑)** 按钮，Keil 将自动为你生成一个 `Template.sct` 文件。
 >
 > 关闭 Keil，然后进行下一步。
+
+### 0.5 (可选) 将 keil2cmake 添加到你的 Path 环境变量
+
+这样做可以让你不必输入完整的（可能很长的）路径。
+
+关于如何将 `keil2cmake.exe` 所在的路径添加到 Path 环境变量，你可以在网上搜索“\< Windows/Linux \> 添加环境变量 Path”。
 
 ### 1\. 根据 uvprojx 文件生成 CMakeLists.txt 和 toolchain.cmake
 
@@ -65,6 +68,12 @@ keil2cmake -e ARMCLANG_PATH=D:/Program/Keil_v5/ARM/ARMCLANG/bin/
 ```
 
 然后 `CMakeLists.txt` 和 `toolchain.cmake` 文件将会生成在 `./USER/` 目录下。
+
+如果你已经完成了[将 keil2cmake 添加到你的 path 环境变量](https://www.google.com/search?q=%2305-%E5%8F%AF%E9%80%89-%E5%B0%86-keil2cmake-%E6%B7%BB%E5%8A%A0%E5%88%B0%E4%BD%A0%E7%9A%84-path-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F)的步骤，你可以只输入 `keil2cmake` 而不是它的完整路径，像这样：
+
+```bash
+keil2cmake ./USER/example.uvprojx -o ./USER/
+```
 
 在大多数情况下，你应该将输出目录设置为 `.uvprojx` 文件所在的目录，因为 .c、.h 和其他文件很可能在工程文件中是以相对路径的形式组织的。如果输出目录是其他文件夹，你可能需要手动修改 `CMakeLists.txt` 文件中的路径。
 
